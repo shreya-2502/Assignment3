@@ -1,0 +1,150 @@
+#include<stdio.h>              
+struct student                                           
+{                                                 
+ char name[30];                                                                 
+ int rno, mark;                                                                  
+};       
+void addrecord()                                                
+{                                                                  
+   int n , i;
+   printf("enter how many students you want : ");
+   scanf("%d",&n);
+  struct student stu;  
+  FILE *fp;
+  char ch;
+  fp = fopen("student_mark_list.txt", "a+");
+  for(int i=0;i<n;i++)
+  {
+  printf("\nEnter RollNo: ");
+  scanf("%d", &stu.rno);
+
+  printf("\nEnter  Name: ");                                               
+  scanf(" %s", stu.name);
+
+  printf("\nEnter  Marks: ");                                               
+  scanf("%d", &stu.mark);
+
+  fprintf(fp, "%d %s %d\n", stu.rno, stu.name, stu.mark);
+  }
+  fclose(fp);
+  printf("\nStudent mark is written successfully!");
+}
+
+void showrecord()
+{
+  struct student stu;                                                           
+  FILE *fp; 
+  int rno, status=0;                                                                    
+  fp = fopen("student_mark_list.txt", "a+");                                   
+  if(fp == NULL)                                                                
+  {                                                                             
+    printf("\nStudent mark list does not exists!");                                           
+  }                                                                             
+  else                                                                          
+  {
+     printf("\nEnter student RollNo: ");
+     scanf("%d", &rno);
+     printf("\nRollNo\tName\t Marks");                               
+     while(fscanf(fp, "%d %s %d\n", &stu.rno, stu.name, &stu.mark)!=EOF)                                    
+     { 
+       if(rno == stu.rno)
+       {                                                                         
+         printf("\n%d\t%s\t%d", stu.rno,stu.name,stu.mark);                        
+         status = 1;
+       }
+     }                                                                          
+     fclose(fp);                                                                
+  }                 
+  if(status == 0)
+  {
+    printf("\nStudent mark does not exists!");
+  }                                                            
+}   
+void deleterecord()                                                               
+{                                                                               
+  struct student stu;                                                           
+  FILE *fp, *fp_temp;                                                                     
+  int rno, status=0;                                                             
+  fp = fopen("student_mark_list.txt", "r+");                                   
+  fp_temp = fopen("student_mark_list_temp.txt", "a+");
+  if(fp == NULL)                                                                
+  {                                                                             
+    printf("\nStudent mark list does not exists!");                             
+  }                                                                             
+  else                                                                          
+  {                                                                             
+     printf("\nEnter student RollNO: ");                                            
+     scanf("%d", &rno);
+     while(fscanf(fp, "%d %s %d\n", &stu.rno, stu.name, &stu.mark)!=EOF)           
+     {                                                           
+       if(rno != stu.rno)                                                         
+       { 
+         fprintf(fp_temp, "%d %s %d\n", stu.rno, stu.name, stu.mark);
+       }        
+       else
+       {
+         status =1;
+       }                                                                
+     }                                                               
+     if(status == 1)                                                               
+     {                                                                             
+       printf("\nStudent mark detail is deleted for student id : %d", rno);         
+     }             
+     fclose(fp);                                                                
+     fclose(fp_temp);
+     remove("student_mark_list.txt");
+     rename("student_mark_list_temp.txt", "student_mark_list.txt");
+  }                                                                             
+}
+void showall()                                                              
+{                                                                               
+  struct student stu;                                                           
+  FILE *fp;                                                                     
+  fp = fopen("student_mark_list.txt", "a+");                                   
+  if(fp == NULL)                                                                
+  {                                                                             
+    printf("\nStudent mark list does not exists!");                             
+  }                                                                             
+  else                                                                          
+  {                                                                             
+     printf("\nstudent id\tstudent name\t mark");                               
+     while(fscanf(fp, "%d %s %d\n", &stu.rno, stu.name, &stu.mark)!=EOF)           
+     { 
+       printf("\n%d\t%s\t%d", stu.rno,stu.name,stu.mark);                        
+     }                                                                          
+     fclose(fp);                                                                
+  }                                                                             
+}  
+
+int main()
+{
+  struct student stu;
+  int option;
+  printf("\nstudent mark details\n-------------------");
+  do
+  {
+  printf("\n1 -> Add record\n2 -> Delete record\n3 -> Show record\n4 -> Show all\n5 -> Exit");
+  printf("\nEnter option: ");
+  scanf("%d", &option);
+  switch(option)
+  {
+    case 1:
+      addrecord();
+      break;
+    case 2:
+      deleterecord();
+      break;
+    case 3:
+      showrecord();
+      break;
+    case 4:
+      showall();
+      break;
+    case 5:
+      return 1;
+    default:
+      printf("\nInvalid option!");
+  }
+  }while(1);;
+}
+
